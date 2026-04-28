@@ -47,10 +47,15 @@ class JoinFlowScreen extends StatelessWidget {
 }
 
 class _JoinStepScaffold extends StatelessWidget {
-  const _JoinStepScaffold({required this.valueKey, required this.children});
+  const _JoinStepScaffold({
+    required this.valueKey,
+    required this.children,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+  });
 
   final String valueKey;
   final List<Widget> children;
+  final CrossAxisAlignment crossAxisAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +70,7 @@ class _JoinStepScaffold extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(32, 56, 32, 40),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: crossAxisAlignment,
                   children: children,
                 ),
               ),
@@ -86,6 +91,7 @@ class _JoinWelcomeStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return _JoinStepScaffold(
       valueKey: 'join-1',
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const _JoinLogo(),
         const SizedBox(height: 8),
@@ -102,14 +108,17 @@ class _JoinWelcomeStep extends StatelessWidget {
           ],
           size: 48,
           height: 1.0,
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),
         const _JoinParagraph(
           'This is a space built for men. Not a therapy app. Not a meditation app. A method. The You Define You Mindset Method — built to help you understand what\'s going on, where it came from, and what to do about it.',
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 14),
         const _JoinParagraph(
           'It\'s going to take some honest work. And it\'s going to be worth it.',
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 30),
         _JoinButton(
@@ -388,16 +397,19 @@ class _JoinHeadline extends StatelessWidget {
     required this.spans,
     required this.size,
     required this.height,
+    this.textAlign = TextAlign.start,
   });
 
   final List<InlineSpan> spans;
   final double size;
   final double height;
+  final TextAlign textAlign;
 
   @override
   Widget build(BuildContext context) {
     return Text.rich(
       TextSpan(children: spans),
+      textAlign: textAlign,
       style: AppTheme.bebas(
         size: size,
         height: height,
@@ -409,14 +421,16 @@ class _JoinHeadline extends StatelessWidget {
 }
 
 class _JoinParagraph extends StatelessWidget {
-  const _JoinParagraph(this.text);
+  const _JoinParagraph(this.text, {this.textAlign = TextAlign.start});
 
   final String text;
+  final TextAlign textAlign;
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
+      textAlign: textAlign,
       style: AppTheme.body(
         size: 13.6,
         height: 1.7,

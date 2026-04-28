@@ -404,15 +404,20 @@ class AppController extends ChangeNotifier {
     required String thought,
   }) async {
     final now = DateTime.now();
+    final key = _dateKey(now);
     final label = _dateLabel(now);
-    diaryEntries.removeWhere((entry) => entry.dateLabel == label);
+    diaryEntries.removeWhere(
+      (entry) => entry.dateKey == key || entry.dateLabel == label,
+    );
     diaryEntries.add(
       ThoughtDiaryEntry(
+        dateKey: key,
         dateLabel: label,
         score: score,
         why: why,
         happened: happened,
         heaviestThought: thought,
+        createdAtEpochMs: now.millisecondsSinceEpoch,
       ),
     );
     notifyListeners();
@@ -420,9 +425,13 @@ class AppController extends ChangeNotifier {
   }
 
   ThoughtDiaryEntry? get todayDiaryEntry {
-    final label = _dateLabel(DateTime.now());
+    final now = DateTime.now();
+    final key = _dateKey(now);
+    final label = _dateLabel(now);
     try {
-      return diaryEntries.firstWhere((entry) => entry.dateLabel == label);
+      return diaryEntries.firstWhere(
+        (entry) => entry.dateKey == key || entry.dateLabel == label,
+      );
     } catch (_) {
       return null;
     }
@@ -433,14 +442,18 @@ class AppController extends ChangeNotifier {
     required String down,
     required String up,
     required String action,
+    String change = '',
   }) async {
+    final now = DateTime.now();
     copingEntries.add(
       CopingCheckinEntry(
-        dateLabel: _dateLabel(DateTime.now()),
+        dateLabel: _dateLabel(now),
         score: score,
         down: down,
         up: up,
         action: action,
+        change: change,
+        createdAtEpochMs: now.millisecondsSinceEpoch,
       ),
     );
     notifyListeners();
@@ -507,5 +520,11 @@ class AppController extends ChangeNotifier {
       'Dec',
     ];
     return '${days[date.weekday % 7]} ${date.day} ${months[date.month - 1]}';
+  }
+
+  String _dateKey(DateTime date) {
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+    return '${date.year}-$month-$day';
   }
 }

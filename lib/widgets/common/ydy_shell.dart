@@ -48,9 +48,52 @@ class YdyShell extends StatelessWidget {
                 ),
               ),
             ),
-          SafeArea(top: safeTop, bottom: safeBottom, child: child),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final width = constraints.maxWidth < 480
+                  ? constraints.maxWidth
+                  : 480.0;
+
+              return Align(
+                alignment: Alignment.topCenter,
+                child: SizedBox(
+                  width: width,
+                  height: constraints.maxHeight,
+                  child: SafeArea(
+                    top: safeTop,
+                    bottom: safeBottom,
+                    child: child,
+                  ),
+                ),
+              );
+            },
+          ),
+          const Positioned.fill(
+            child: IgnorePointer(child: CustomPaint(painter: _NoisePainter())),
+          ),
         ],
       ),
     );
   }
+}
+
+class _NoisePainter extends CustomPainter {
+  const _NoisePainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = AppColors.white.withValues(alpha: 0.018);
+    const step = 7.0;
+    for (double y = 0; y < size.height; y += step) {
+      for (double x = 0; x < size.width; x += step) {
+        final seed = ((x * 17 + y * 31).round() % 13);
+        if (seed == 0 || seed == 5) {
+          canvas.drawRect(Rect.fromLTWH(x, y, 0.7, 0.7), paint);
+        }
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

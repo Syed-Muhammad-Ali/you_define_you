@@ -19,6 +19,9 @@ class AppColors {
   static const Color foundationGrey = Color(0xFF1C1208);
   static const Color foundationGreyLight = Color(0xFF241A0E);
   static const Color foundationBorder = Color(0xFF3D2810);
+  static const Color foundationMuted = Color(0xFFB07850);
+  static const Color foundationPanel = Color(0xFF110D07);
+  static const Color toolCard = Color(0xFF15110D);
   static const Color muted = Color(0xCCFFFFFF);
   static const Color softText = Color(0xFFCCCCCC);
   static const Color dimText = Color(0x73FFFFFF);

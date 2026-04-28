@@ -72,36 +72,44 @@ class TimelineEventModel {
 
 class ThoughtDiaryEntry {
   const ThoughtDiaryEntry({
+    required this.dateKey,
     required this.dateLabel,
     required this.score,
     required this.why,
     required this.happened,
     required this.heaviestThought,
+    this.createdAtEpochMs = 0,
   });
 
+  final String dateKey;
   final String dateLabel;
   final int score;
   final String why;
   final String happened;
   final String heaviestThought;
+  final int createdAtEpochMs;
 
   Map<String, dynamic> toJson() {
     return {
+      'dateKey': dateKey,
       'dateLabel': dateLabel,
       'score': score,
       'why': why,
       'happened': happened,
       'heaviestThought': heaviestThought,
+      'createdAtEpochMs': createdAtEpochMs,
     };
   }
 
   factory ThoughtDiaryEntry.fromJson(Map<String, dynamic> json) {
     return ThoughtDiaryEntry(
+      dateKey: json['dateKey'] as String? ?? json['dateLabel'] as String? ?? '',
       dateLabel: json['dateLabel'] as String? ?? '',
       score: json['score'] as int? ?? 0,
       why: json['why'] as String? ?? '',
       happened: json['happened'] as String? ?? '',
       heaviestThought: json['heaviestThought'] as String? ?? '',
+      createdAtEpochMs: json['createdAtEpochMs'] as int? ?? 0,
     );
   }
 }
@@ -113,6 +121,8 @@ class CopingCheckinEntry {
     required this.down,
     required this.up,
     required this.action,
+    this.change = '',
+    this.createdAtEpochMs = 0,
   });
 
   final String dateLabel;
@@ -120,6 +130,8 @@ class CopingCheckinEntry {
   final String down;
   final String up;
   final String action;
+  final String change;
+  final int createdAtEpochMs;
 
   Map<String, dynamic> toJson() {
     return {
@@ -128,6 +140,8 @@ class CopingCheckinEntry {
       'down': down,
       'up': up,
       'action': action,
+      'change': change,
+      'createdAtEpochMs': createdAtEpochMs,
     };
   }
 
@@ -138,6 +152,8 @@ class CopingCheckinEntry {
       down: json['down'] as String? ?? '',
       up: json['up'] as String? ?? '',
       action: json['action'] as String? ?? '',
+      change: json['change'] as String? ?? '',
+      createdAtEpochMs: json['createdAtEpochMs'] as int? ?? 0,
     );
   }
 }
