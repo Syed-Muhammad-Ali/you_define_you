@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../controllers/app_controller.dart';
 import '../../models/app_models.dart';
+import '../../screens/signin_screen.dart';
 import '../foundation/foundation_dashboard_screen.dart';
 import '../join/join_flow_screen.dart';
 import '../onboarding/onboarding_flow_screen.dart';
@@ -16,6 +17,10 @@ class RootView extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
+        if (!controller.isAuthenticated) {
+          return SignInScreen(controller: controller);
+        }
+
         switch (controller.currentStage) {
           case AppStage.foundation:
             return FoundationDashboardScreen(controller: controller);

@@ -6,6 +6,8 @@ import '../../app/theme/app_theme.dart';
 import '../../controllers/app_controller.dart';
 import '../../widgets/common/ydy_shell.dart';
 
+const _joinKeyboardScrollPadding = EdgeInsets.fromLTRB(20, 20, 20, 120);
+
 class JoinFlowScreen extends StatelessWidget {
   const JoinFlowScreen({super.key, required this.controller});
 
@@ -23,20 +25,24 @@ class JoinFlowScreen extends StatelessWidget {
               ? constraints.maxWidth
               : 480.0;
 
-          return Center(
-            child: SizedBox(
-              width: width,
-              height: constraints.maxHeight,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 350),
-                switchInCurve: Curves.easeOut,
-                switchOutCurve: Curves.easeIn,
-                child: switch (controller.joinStep) {
-                  1 => _JoinWelcomeStep(controller: controller),
-                  2 => _JoinWhatStep(controller: controller),
-                  3 => _JoinSeenStep(controller: controller),
-                  _ => _JoinConsentStep(controller: controller),
-                },
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: Center(
+              child: SizedBox(
+                width: width,
+                height: constraints.maxHeight,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 350),
+                  switchInCurve: Curves.easeOut,
+                  switchOutCurve: Curves.easeIn,
+                  child: switch (controller.joinStep) {
+                    1 => _JoinWelcomeStep(controller: controller),
+                    2 => _JoinWhatStep(controller: controller),
+                    3 => _JoinSeenStep(controller: controller),
+                    _ => _JoinConsentStep(controller: controller),
+                  },
+                ),
               ),
             ),
           );
@@ -51,11 +57,13 @@ class _JoinStepScaffold extends StatelessWidget {
     required this.valueKey,
     required this.children,
     this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.topPadding = 56,
   });
 
   final String valueKey;
   final List<Widget> children;
   final CrossAxisAlignment crossAxisAlignment;
+  final double topPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -63,12 +71,13 @@ class _JoinStepScaffold extends StatelessWidget {
       key: ValueKey(valueKey),
       builder: (context, constraints) {
         return SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           physics: const BouncingScrollPhysics(),
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
             child: IntrinsicHeight(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(32, 56, 32, 40),
+                padding: EdgeInsets.fromLTRB(32, topPadding, 32, 40),
                 child: Column(
                   crossAxisAlignment: crossAxisAlignment,
                   children: children,
@@ -96,8 +105,7 @@ class _JoinWelcomeStep extends StatelessWidget {
         const _JoinLogo(),
         const SizedBox(height: 8),
         const _JoinTagline(),
-        const SizedBox(height: 32),
-        const Spacer(),
+        const SizedBox(height: 28),
         _JoinHeadline(
           spans: const [
             TextSpan(text: 'You\'ve been\ncarrying this\n'),
@@ -120,6 +128,7 @@ class _JoinWelcomeStep extends StatelessWidget {
           'It\'s going to take some honest work. And it\'s going to be worth it.',
           textAlign: TextAlign.center,
         ),
+        const Spacer(),
         const SizedBox(height: 30),
         _JoinButton(
           label: 'I\'m ready — show me more →',
@@ -243,11 +252,12 @@ class _JoinConsentStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return _JoinStepScaffold(
       valueKey: 'join-4',
+      topPadding: 32,
       children: [
         _BackLink(onTap: () => controller.advanceJoinStep(3)),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
         const _JoinEyebrow('Almost there'),
-        const SizedBox(height: 10),
+        const SizedBox(height: 8),
         _JoinHeadline(
           spans: const [
             TextSpan(text: 'Your details.\nYour '),
@@ -259,11 +269,11 @@ class _JoinConsentStep extends StatelessWidget {
           size: 38,
           height: 1.1,
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
         const _JoinParagraph(
           'We store your name and email so we can bring your progress back if you return. That\'s it. We don\'t sell it, share it, or use it for advertising. Ever.',
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 14),
         const _GdprBox(),
         const SizedBox(height: 20),
         _JoinInput(
@@ -279,6 +289,7 @@ class _JoinConsentStep extends StatelessWidget {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.done,
           onChanged: controller.updateJoinEmail,
+          readOnly: true,
         ),
         const SizedBox(height: 18),
         _ConsentRow(
@@ -454,6 +465,7 @@ class _JoinButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      height: 50,
       width: double.infinity,
       child: ElevatedButton(
         onPressed: enabled ? onPressed : null,
@@ -472,7 +484,7 @@ class _JoinButton extends StatelessWidget {
           label,
           textAlign: TextAlign.center,
           style: AppTheme.bebas(
-            size: 18.5,
+            size: 15,
             letterSpacing: 1.1,
             color: AppColors.white,
           ),
@@ -633,7 +645,7 @@ class _GdprBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.white.withValues(alpha: 0.03),
         border: Border.all(color: AppColors.white.withValues(alpha: 0.08)),
@@ -651,10 +663,10 @@ class _GdprBox extends StatelessWidget {
               height: 1.2,
             ).copyWith(letterSpacing: 1.1),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           ..._items.map(
             (item) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.only(bottom: 8),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -703,6 +715,7 @@ class _JoinInput extends StatelessWidget {
     required this.onChanged,
     this.keyboardType,
     this.textInputAction,
+    this.readOnly = false,
   });
 
   final String initialValue;
@@ -710,6 +723,7 @@ class _JoinInput extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -718,8 +732,17 @@ class _JoinInput extends StatelessWidget {
       onChanged: onChanged,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
+      readOnly: readOnly,
+      scrollPadding: _joinKeyboardScrollPadding,
+      onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
       cursorColor: AppColors.orange,
-      style: AppTheme.body(size: 14, color: AppColors.white, height: 1.4),
+      style: AppTheme.body(
+        size: 14,
+        color: readOnly
+            ? AppColors.white.withValues(alpha: 0.35)
+            : AppColors.white,
+        height: 1.4,
+      ),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: AppTheme.body(
@@ -727,7 +750,9 @@ class _JoinInput extends StatelessWidget {
           color: AppColors.white.withValues(alpha: 0.2),
         ),
         filled: true,
-        fillColor: AppColors.white.withValues(alpha: 0.05),
+        fillColor: readOnly
+            ? AppColors.white.withValues(alpha: 0.02)
+            : AppColors.white.withValues(alpha: 0.05),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 15,
@@ -735,12 +760,16 @@ class _JoinInput extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
-            color: AppColors.white.withValues(alpha: 0.12),
+            color: AppColors.white.withValues(
+              alpha: readOnly ? 0.06 : 0.12,
+            ),
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.orange),
+          borderSide: BorderSide(
+            color: readOnly ? AppColors.white.withValues(alpha: 0.06) : AppColors.orange,
+          ),
         ),
       ),
     );

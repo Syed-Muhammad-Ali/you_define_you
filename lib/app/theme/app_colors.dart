@@ -6,11 +6,11 @@ class AppColors {
   static const Color black = Color(0xFF0C0C0C);
   static const Color dark = Color(0xFF141414);
   static const Color card = Color(0xFF1A1A1A);
-  static const Color orange = Color(0xFFFF6B35);
+  static const Color orange = Color(0xFFFF751F);
   static const Color orangeBright = Color(0xFFFF751F);
-  static const Color orangeDim = Color(0x14FF6B35);
+  static const Color orangeDim = Color(0x2EFF751F);
   static const Color orangeDimStrong = Color(0x2EFF751F);
-  static const Color orangeGlow = Color(0x40FF6B35);
+  static const Color orangeGlow = Color(0x8CFF751F);
   static const Color orangeGlowStrong = Color(0x8CFF751F);
   static const Color teal = Color(0xFF4A7C7E);
   static const Color white = Color(0xFFFFFFFF);

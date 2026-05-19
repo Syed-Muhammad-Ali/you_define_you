@@ -1,5 +1,45 @@
 enum AppStage { join, onboarding, foundation }
 
+class AuthSession {
+  const AuthSession({
+    required this.token,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+    this.planKey = '',
+    this.planName = '',
+    this.planPriceLabel = '',
+  });
+
+  final String token;
+  final String email;
+  final String firstName;
+  final String lastName;
+  final String planKey;
+  final String planName;
+  final String planPriceLabel;
+
+  Map<String, dynamic> toJson() => {
+        'token': token,
+        'email': email,
+        'firstName': firstName,
+        'lastName': lastName,
+        'planKey': planKey,
+        'planName': planName,
+        'planPriceLabel': planPriceLabel,
+      };
+
+  factory AuthSession.fromJson(Map<String, dynamic> json) => AuthSession(
+        token: json['token'] as String? ?? '',
+        email: json['email'] as String? ?? '',
+        firstName: json['firstName'] as String? ?? '',
+        lastName: json['lastName'] as String? ?? '',
+        planKey: json['planKey'] as String? ?? '',
+        planName: json['planName'] as String? ?? '',
+        planPriceLabel: json['planPriceLabel'] as String? ?? '',
+      );
+}
+
 enum OnboardingStage { welcome, acknowledge, questions, profile, commitment }
 
 class JoinData {
@@ -112,6 +152,42 @@ class ThoughtDiaryEntry {
       createdAtEpochMs: json['createdAtEpochMs'] as int? ?? 0,
     );
   }
+}
+
+class WorkEntry {
+  const WorkEntry({
+    required this.beliefIndex,
+    required this.belief,
+    required this.type,
+    required this.response,
+    required this.action,
+    required this.date,
+  });
+
+  final int beliefIndex;
+  final String belief;
+  final String type;
+  final String response;
+  final String action;
+  final String date;
+
+  Map<String, dynamic> toJson() => {
+        'beliefIndex': beliefIndex,
+        'belief': belief,
+        'type': type,
+        'response': response,
+        'action': action,
+        'date': date,
+      };
+
+  factory WorkEntry.fromJson(Map<String, dynamic> json) => WorkEntry(
+        beliefIndex: (json['beliefIndex'] as num?)?.toInt() ?? 0,
+        belief: json['belief'] as String? ?? '',
+        type: json['type'] as String? ?? '',
+        response: json['response'] as String? ?? '',
+        action: json['action'] as String? ?? '',
+        date: json['date'] as String? ?? '',
+      );
 }
 
 class CopingCheckinEntry {

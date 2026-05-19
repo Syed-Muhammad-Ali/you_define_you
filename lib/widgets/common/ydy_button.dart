@@ -10,16 +10,21 @@ class YdyButton extends StatelessWidget {
     required this.onPressed,
     this.enabled = true,
     this.ghost = false,
+    this.textSize,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final bool enabled;
   final bool ghost;
+  final double? textSize;
 
   @override
   Widget build(BuildContext context) {
+    // final effectiveTextSize = textSize ?? (ghost ? 13.0 : 15.0);
+
     return SizedBox(
+      height: 50,
       width: double.infinity,
       child: ElevatedButton(
         onPressed: enabled ? onPressed : null,
@@ -27,14 +32,15 @@ class YdyButton extends StatelessWidget {
           elevation: 0,
           backgroundColor: ghost ? Colors.transparent : AppColors.orange,
           foregroundColor: AppColors.white,
-          disabledBackgroundColor: AppColors.border,
+          disabledBackgroundColor: const Color(0xFF2A2A2A),
+          disabledForegroundColor: const Color(0xFF444444),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: ghost
                 ? const BorderSide(color: AppColors.border)
                 : BorderSide.none,
           ),
-          padding: const EdgeInsets.symmetric(vertical: 18),
+          padding: const EdgeInsets.symmetric(vertical: 16),
         ),
         child: Text(
           label,
@@ -44,7 +50,7 @@ class YdyButton extends StatelessWidget {
                   weight: FontWeight.w400,
                   color: AppColors.muted,
                 )
-              : AppTheme.bebas(size: 22, letterSpacing: 1.6),
+              : AppTheme.bebas(size: textSize ?? 15.0, letterSpacing: 1.35),
         ),
       ),
     );

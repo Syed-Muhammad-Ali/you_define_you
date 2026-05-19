@@ -1,0 +1,107 @@
+workflows:
+
+  # ─────────────────────────────────────────
+  #  iOS — App Store
+  # ─────────────────────────────────────────
+  ios-release:
+    name: iOS Release
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+
+    environment:
+      flutter: stable
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.devbunch.ydy
+      vars:
+        APP_STORE_CONNECT_ISSUER_ID: $APP_STORE_CONNECT_ISSUER_ID
+        APP_STORE_CONNECT_KEY_IDENTIFIER: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        APP_STORE_CONNECT_PRIVATE_KEY: $APP_STORE_CONNECT_PRIVATE_KEY
+        CERTIFICATE_PRIVATE_KEY: $CERTIFICATE_PRIVATE_KEY
+
+    scripts:
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
+
+      - name: Get Flutter packages
+        script: flutter packages pub get
+
+      - name: Build iOS release
+        script: |
+          flutter build ipa \
+            --release \
+            --export-options-plist=/Users/builder/export_options.plist
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
+        submit_to_app_store: false   # set to true when ready for production release
+      email:
+        recipients:
+          - ammar@devbunch.com
+        notify:
+          success: true
+          failure: true
+
+  # ─────────────────────────────────────────
+  #  Android — Google Play
+  # ─────────────────────────────────────────
+  android-release:
+    name: Android Release
+    max_build_duration: 60
+    instance_type: linux_x2
+
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+
+    environment:
+      flutter: stable
+      android_signing:
+        - ydy_keystore
+      vars:
+        PACKAGE_NAME: com.devbunch.ydy
+
+    scripts:
+      - name: Get Flutter packages
+        script: flutter packages pub get
+
+      - name: Build Android release AAB
+        script: |
+          flutter build appbundle \
+            --release \
+            --build-name=1.0.$(BUILD_NUMBER) \
+            --build-number=$BUILD_NUMBER
+
+    artifacts:
+      - build/app/outputs/bundle/release/*.aab
+      - build/app/outputs/mapping/release/mapping.txt
+
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal        # internal → alpha → beta → production
+        submit_as_draft: false
+      email:
+        recipients:
+          - ammar@devbunch.com
+        notify:
+          success: true
+          failure: true
